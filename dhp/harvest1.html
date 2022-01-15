@@ -95,7 +95,6 @@
         receiptTypes: [sym.ReceiptType.Harvest_Fee],
       })
       .toPromise();
-      console.log(res);
       var lastHeight = 0;
       var cnt = 0;
       for(const statements  of res.data){
@@ -116,7 +115,6 @@
           cnt++;
         }
       }
-      console.log(res.isLastPage);
       if(res.isLastPage){
         $('#harvests_more').hide();
       }
