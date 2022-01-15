@@ -4,13 +4,27 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- デザインフレームワークの読み込み -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-  <title>ハーベスト履歴表示サンプル</title>
+  <title>ハーベスト履歴表示</title>
 </head>
 <body>
   <div class="container">
+    <div class="card text-dark bg-light mb-3 mt-3">
+      <div class="card-header">アカウント残高</div>
+      <div class="card-body">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="55px" height="55px" viewBox="95 30 70 65" xml:space="preserve" class="account account-icon" data-v-c5228896="">
+          <rect x="25.266" y="107.646" fill-rule="evenodd" clip-rule="evenodd" fill="none" width="207.333" height="23.667"></rect>
+          <svg x="96px" y="30px"><path d="M2.5 32C2.5 15.4315 15.9315 2 32.5 2V2C49.0685 2 62.5 15.4315 62.5 32V32C62.5 48.5685 49.0685 62 32.5 62V62C15.9315 62 2.5 48.5685 2.5 32V32Z" fill="RGB(158,250,217)">
+            </path><path fill-rule="evenodd" clip-rule="evenodd" d="M27.6558 24.1875C27.6558 21.5124 29.8244 19.3438 32.4995 19.3438C35.1746 19.3438 37.3433 21.5124 37.3433 24.1875C37.3433 26.8626 35.1746 29.0312 32.4995 29.0312C29.8244 29.0312 27.6558 26.8626 27.6558 24.1875ZM32.4995 16.5312C28.2711 16.5312 24.8433 19.9591 24.8433 24.1875C24.8433 28.4159 28.2711 31.8437 32.4995 31.8437C36.7279 31.8437 40.1558 28.4159 40.1558 24.1875C40.1558 19.9591 36.7279 16.5312 32.4995 16.5312ZM22.9683 42.9375C22.9683 40.2624 25.1369 38.0938 27.812 38.0938H37.187C39.8621 38.0938 42.0308 40.2624 42.0308 42.9375C42.0308 43.8867 41.2612 44.6562 40.312 44.6562H24.687C23.7378 44.6562 22.9683 43.8867 22.9683 42.9375ZM27.812 35.2812C23.5836 35.2812 20.1558 38.7091 20.1558 42.9375C20.1558 45.44 22.1845 47.4687 24.687 47.4687H40.312C42.8146 47.4687 44.8433 45.44 44.8433 42.9375C44.8433 38.7091 41.4154 35.2812 37.187 35.2812H27.812Z" fill="black"></path>
+            <path d="M32.5 60.125C16.967 60.125 4.375 47.533 4.375 32H0.625C0.625 49.6041 14.8959 63.875 32.5 63.875V60.125ZM60.625 32C60.625 47.533 48.033 60.125 32.5 60.125V63.875C50.1041 63.875 64.375 49.6041 64.375 32H60.625ZM32.5 3.875C48.033 3.875 60.625 16.467 60.625 32H64.375C64.375 14.3959 50.1041 0.125 32.5 0.125V3.875ZM32.5 0.125C14.8959 0.125 0.625 14.3959 0.625 32H4.375C4.375 16.467 16.967 3.875 32.5 3.875V0.125Z" fill="RGB(158,250,217)"></path>
+          </svg>
+        </svg>
+        <h5 class="card-title"><span id="address"></span></h5>
+        <h5 class="card-title"><span id="account_amount">0</span> XYM</h5>
+      </div>
+    </div>
+    
     <table id="harvest" class="table">
       <thead>
         <tr>
@@ -26,39 +40,53 @@
     </dl>
   </div>
   
-  <!-- ライブラリの読み込み -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://xembook.github.io/nem2-browserify/symbol-sdk-1.0.2.js"></script>
   <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
-  <!-- デザインフレームワークの読み込み -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
   <script>
-    // === SymbolとDHPで切り替える必要がある部分 ===
-    const node = "http://dual-1.nodes-xym.work:3000"; //Symbolノードを指定 or dHealthノードを指定
-    const rawAddress = ""; //Sybmolアドレスを指定 or　dHealthアドレスを指定
-    // === ここまで ===
+    const node = "https://dai-dhealth.sfn.tools:3001";
+    const rawAddress = "NAJKOY-UBK2KY-BNCH7F-7XIPTU-OJZZOC-7O7QHU-XCA";
     const sym = require("/node_modules/symbol-sdk");
-    const pageSize = 15;  //初期の履歴表示数 15件
+    const op = require("/node_modules/rxjs/operators");
+    const pageSize = 10;
 
     const repo = new sym.RepositoryFactoryHttp(node);
     const receiptRepo = repo.createReceiptRepository();
     const blockRepo = repo.createBlockRepository();
+    const accountRepo = repo.createAccountRepository();
+    const currencyId = "39E0C49FA322A459";
     var epochAdjustment;
     var harvestPageNumber=0;
+    var address = sym.Address.createFromRawAddress(rawAddress);
+
+
 
     (async() =>{
+      $('#address').text(address.plain());
       epochAdjustment = await repo.getEpochAdjustment().toPromise();
       getHarvests(pageSize);
+      getAmount();
     })();
 
-    $('#harvests_more' ).click(function(){getHarvests(30); return false;}); //さらに読み込むをクリックしたときの動作
+    $('#harvests_more' ).click(function(){getHarvests(pageSize); return false;});
     
+    const getAmount = async () => {
+      const accountInfo = accountRepo.getAccountInfo(address)
+        accountInfo.pipe(
+          op.mergeMap(_=>_.mosaics),
+          op.filter(_ => _.id.toHex() === currencyId),
+        )
+        .subscribe(_=>{
+          $('#account_amount').text(dispAmount(_.amount.toString(),6));
+        });
+    }
+
     const getHarvests = async(page) => {
       
       harvestPageNumber++;
 
-      address = sym.Address.createFromRawAddress(rawAddress);
       const res = await receiptRepo.searchReceipts({
         targetAddress: address,
         order: "desc",
@@ -67,6 +95,7 @@
         receiptTypes: [sym.ReceiptType.Harvest_Fee],
       })
       .toPromise();
+      console.log(res);
       var lastHeight = 0;
       var cnt = 0;
       for(const statements  of res.data){
@@ -87,6 +116,7 @@
           cnt++;
         }
       }
+      console.log(res.isLastPage);
       if(res.isLastPage){
         $('#harvests_more').hide();
       }
@@ -98,11 +128,12 @@
       if(cnt === 0){
         cnt = "";
       }
+      console.log(height);
 
       $("#" + tag).append("<tr>"
       + "<td id='" + tag + "_date" + height + receipt.type + cnt + "'></td>"
       + "<td id='" + tag + "_type' style='font-size:84%;' class='text-left'>" + height + "</td>"
-      + "<td id='" + tag + "_amount' class='text-right'>" + dispAmount(receipt.amount,6) + "</td>" //mosaicLabel
+      + "<td id='" + tag + "_amount' class='text-right'>" + dispAmount(receipt.amount,6) + "</td>"
       + "</tr>"
       );
 
